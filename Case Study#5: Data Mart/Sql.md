@@ -1,7 +1,19 @@
+#  Case Study #5: Data Mart
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/045ecde3-67d6-4187-a5fb-ab68dbcbadd0)
 
+[Visit This link for complete Project Explanantion](https://8weeksqlchallenge.com/case-study-5/)
 
-/*---------------------- Part A data cleaninsing Steps -----------------------------*/
+### Problem Statement
+Danny created a new streaming service that only had food related content - something like Netflix but with only cooking shows! Danny finds a few smart friends to launch his new startup Foodie-Fi in 2020 and started selling monthly and annual subscriptions, giving their customers unlimited on-demand access to exclusive food videos from around the world! This case study focuses on using subscription style digital data to answer important business questions.
+
+### Entity Relationship Diagram
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/2706a9fd-a585-4e70-a464-48c02e064b37)
+
+----
+ 
+### Part A data cleaninsing Steps
+````sql
 DROP TABLE IF EXISTS clean_weekly_sales;
 CREATE TABLE clean_weekly_sales AS
 (
@@ -26,39 +38,52 @@ CREATE TABLE clean_weekly_sales AS
             ROUND(sales/transactions,2) AS avg_transaction
     FROM CTE
 );
+````
+ ----
 
+### Part B Data Exploration 
 
-/* ------------------------- Part B Data Exploration -------------------------------*/
-#Q1 What day of the week is used for each week_date value?
+**Q1 What day of the week is used for each week_date value?**
+````sql
 SELECT DISTINCT DAYNAME(week_date_f)
 FROM clean_weekly_sales;
+````
 -- MONDAY
 
-#Q2 What range of week numbers are missing from the dataset?
+**Q2 What range of week numbers are missing from the dataset?**
+````sql
 SELECT DISTINCT week_number
 FROM clean_weekly_sales
 ORDER BY 1;
+````
 -- Now <=12 days dont exost and more than 35 don't exist
 -- to get actual list of numbers create a temp table with values 1 - 52 and do not in operation
 
-#Q3 How many total transactions were there for each year in the dataset?
+**Q3 How many total transactions were there for each year in the dataset?**
+````sql
 SELECT calendar_year, SUM(transactions)
 FROM clean_weekly_sales
 GROUP BY 1
 ORDER BY 1;
+````
 
-#Q4 What is the total sales for each region for each month?
+**Q4 What is the total sales for each region for each month?**
+````sql
 SELECT region, month_number, SUM(sales)
 FROM clean_weekly_sales
 GROUP BY 2,1
 ORDER BY 2,1;
+````
 
-#Q5 What is the total count of transactions for each platform
+**Q5 What is the total count of transactions for each platform**
+````sql
 SELECT platform, SUM(transactions)
 FROM clean_weekly_sales
 GROUP BY 1;
+````
 
-#Q6 What is the percentage of sales for Retail vs Shopify for each month?
+**Q6 What is the percentage of sales for Retail vs Shopify for each month?**
+````sql
 WITH CTE_t AS 
 (
 	SELECT CONCAT(month_number, '-', calendar_year) AS month_year, SUM(sales) AS total_sales, SUM(CASE WHEN platform = 'retail' THEN sales ELSE 0 END) AS retail_sales,
@@ -70,40 +95,54 @@ WITH CTE_t AS
 
 SELECT month_year, ROUND(100*(retail_sales/total_sales),2) AS retail, ROUND(100*(shoppify_sales/total_sales),2) AS shoppify
 FROM CTE_t;
+````
 
-#Q7 What is the amount and percentage of sales by demographic for each year in the dataset?
+**Q7 What is the amount and percentage of sales by demographic for each year in the dataset?**
+````sql
 SELECT calendar_year, demographic, SUM(sales) AS yearly_sales,
 	   ROUND(100*(SUM(sales)/(SUM(SUM(sales)) OVER(PARTITION BY calendar_year))),2) AS perc_sales
 FROM clean_weekly_sales
 GROUP BY 1,2 
 ORDER BY 1,2;
+````
 
-#Q8 Which age_band and demographic values contribute the most to Retail sales?
+**Q8 Which age_band and demographic values contribute the most to Retail sales?**
 -- age_band
+````sql
 SELECT age_band, SUM(sales),ROUND(100*(SUM(sales)/(SUM(SUM(sales)) OVER())),2) AS ageband_sales 
 FROM clean_weekly_sales
 GROUP BY 1;
-
+````
 -- demographic band
+````sql
 SELECT demographic, SUM(sales),ROUND(100*(SUM(sales)/(SUM(SUM(sales)) OVER())),2) AS ageband_sales 
 FROM clean_weekly_sales
 GROUP BY 1;
-
+````
 -- both
+````sql
 SELECT age_band, demographic, SUM(sales),ROUND(100*(SUM(sales)/(SUM(SUM(sales)) OVER())),2) AS ageband_sales 
 FROM clean_weekly_sales
 GROUP BY 1,2 ;
+````
 
-#Qn 9  Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?
+**#Qn 9  Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?**
+
 -- No we cannot do that
+````sql
 SELECT calendar_year, platform, ROUND(SUM(sales)/SUM(transactions),2)
 FROM clean_weekly_sales
 GROUP BY 1,2;
+````
 
+----
 
-/*--------------------------------- Part c ANALYSIS --------------------------------------*/
-#Q1 What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in 
- #actual values and percentage of sales?
+### Part c ANALYSIS 
+
+**Q1 What is the total sales for the 4 weeks before and after 2020-06-15? What is the growth or reduction rate in 
+ actual values and percentage of sales?**
+ 
+````sql 
 WITH CTE1 AS
 (
 	SELECT CASE WHEN week_number BETWEEN 21 AND 24 then '1_before'
@@ -126,11 +165,13 @@ WITH CTE1 AS
 SELECT sales_diff, perc
 FROM CTE2
 WHERE sales_diff IS NOT NULL;
+````
 
-#Q2 What about the entire 12 weeks before and after?
+**Q2 What about the entire 12 weeks before and after?**
 -- Can use the same code as in Q1
 
-#Q3 How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?
+**#Q3 How do the sale metrics for these 2 periods before and after compare with the previous years in 2018 and 2019?**
+````sql
 WITH cte_4weeks AS (
   SELECT
     calendar_year,
@@ -163,5 +204,8 @@ SELECT
 FROM cte_calculations
 WHERE sales_change IS NOT NULL AND sales_diff IS NOT NULL
 ORDER BY calendar_year;
+````
 
 -- And similarly can be done for 12 weeks period as well
+
+----
