@@ -39,6 +39,10 @@ CREATE TABLE clean_weekly_sales AS
     FROM CTE
 );
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/33ebcc07-ba1d-4cc8-b233-dd9d8131c777)
+
+
  ----
 
 ### Part B Data Exploration 
@@ -48,7 +52,7 @@ CREATE TABLE clean_weekly_sales AS
 SELECT DISTINCT DAYNAME(week_date_f)
 FROM clean_weekly_sales;
 ````
--- MONDAY
+Output: MONDAY
 
 **Q2 What range of week numbers are missing from the dataset?**
 ````sql
@@ -56,8 +60,12 @@ SELECT DISTINCT week_number
 FROM clean_weekly_sales
 ORDER BY 1;
 ````
--- Now <=12 days dont exost and more than 35 don't exist
--- to get actual list of numbers create a temp table with values 1 - 52 and do not in operation
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ac3eae85-030c-4c1d-94eb-3b9497421292)
+
+
+- Now <=12 days dont exost and more than 35 don't exist
+- to get actual list of numbers create a temp table with values 1 - 52 and do not in operation
 
 **Q3 How many total transactions were there for each year in the dataset?**
 ````sql
@@ -67,6 +75,9 @@ GROUP BY 1
 ORDER BY 1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/51a1c967-eeeb-47b2-a630-da3ec0aba80b)
+
+
 **Q4 What is the total sales for each region for each month?**
 ````sql
 SELECT region, month_number, SUM(sales)
@@ -75,12 +86,18 @@ GROUP BY 2,1
 ORDER BY 2,1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/33d2e01a-7111-42f4-bf8c-2aadd41cacd2)
+
+
 **Q5 What is the total count of transactions for each platform**
 ````sql
 SELECT platform, SUM(transactions)
 FROM clean_weekly_sales
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/e889df77-3077-47a7-9f28-42f2625fd5d1)
+
 
 **Q6 What is the percentage of sales for Retail vs Shopify for each month?**
 ````sql
@@ -97,6 +114,9 @@ SELECT month_year, ROUND(100*(retail_sales/total_sales),2) AS retail, ROUND(100*
 FROM CTE_t;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/c5f85db7-bdeb-4757-aeb7-2fe5c21eb716)
+
+
 **Q7 What is the amount and percentage of sales by demographic for each year in the dataset?**
 ````sql
 SELECT calendar_year, demographic, SUM(sales) AS yearly_sales,
@@ -105,6 +125,9 @@ FROM clean_weekly_sales
 GROUP BY 1,2 
 ORDER BY 1,2;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/2047acf2-4343-4a9c-b76e-80169ad94e43)
+
 
 **Q8 Which age_band and demographic values contribute the most to Retail sales?**
 -- age_band
@@ -126,6 +149,9 @@ FROM clean_weekly_sales
 GROUP BY 1,2 ;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ea69dbd7-dc4b-4542-ab6e-3f0cb6a19d20)
+
+
 **#Qn 9  Can we use the avg_transaction column to find the average transaction size for each year for Retail vs Shopify? If not - how would you calculate it instead?**
 
 -- No we cannot do that
@@ -134,6 +160,9 @@ SELECT calendar_year, platform, ROUND(SUM(sales)/SUM(transactions),2)
 FROM clean_weekly_sales
 GROUP BY 1,2;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/f71bf58e-e02b-4326-b656-51626e2405ef)
+
 
 ----
 
@@ -166,6 +195,9 @@ SELECT sales_diff, perc
 FROM CTE2
 WHERE sales_diff IS NOT NULL;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/6a6bcb80-a204-4422-ad79-a7ff5f7696fa)
+
 
 **Q2 What about the entire 12 weeks before and after?**
 -- Can use the same code as in Q1
@@ -205,6 +237,8 @@ FROM cte_calculations
 WHERE sales_change IS NOT NULL AND sales_diff IS NOT NULL
 ORDER BY calendar_year;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/fb58e5ed-5d17-4a25-a4f2-899b8aae6af2)
+
 
 -- And similarly can be done for 12 weeks period as well
 
