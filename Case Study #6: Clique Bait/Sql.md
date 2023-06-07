@@ -16,6 +16,7 @@ Clique Bait is not like your regular online seafood store - the founder and CEO 
 SELECT COUNT(DISTINCT user_id) 
 FROM users;
 ````
+OUTPUT: 500
 
 **Q2 How many cookies does each user have on average?**
 ````sql
@@ -29,12 +30,17 @@ SELECT SUM(cookie_count)/COUNT(*) AS avg_cookies
 FROM CTE;
 ````
 
+Output (Avg_Cookies): 3.5640
+
 **Q3 What is the unique number of visits by all users per month?**
 ````sql
 SELECT MONTH(event_time), COUNT(DISTINCT visit_id)
 FROM events
 GROUP BY 1 ;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/0a239360-4aba-447b-afb6-b0781d818a91)
+
 
 **Q4 What is the number of events for each event type?**
 ````sql
@@ -43,6 +49,9 @@ FROM events
 GROUP BY 1
 ORDER BY 2 desc;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/8678462f-ed34-4c53-98b2-4d96d8335f25)
+
 
 **Q5 What is the percentage of visits which have a purchase event?**
 ````sql
@@ -55,6 +64,8 @@ WITH CTE AS
 SELECT ROUND(100*pur_visit/(SELECT COUNT(DISTINCT visit_id) FROM events),2) as PURCHASE_Perc
 FROM CTE;
 ````
+
+OUTPUT(Purchase_Perc): 49.86
 
 **Q6 What is the percentage of visits which view the checkout page but do not have a purchase event?**
 ````sql
@@ -73,6 +84,8 @@ FROM cte_visits_with_checkout_and_purchase_flags
 WHERE checkout_flag = 1;
 ````
 
+Output(checkout_without_purchase_percentage): 27.55
+
 **Q7 What are the top 3 pages by number of views?**
 ````sql
 SELECT E.page_id, COUNT(DIstinct visit_id)
@@ -81,6 +94,9 @@ GROUP BY 1
 ORDER BY 2 DESC
 LIMIT 3;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/38c7d0f6-1c8b-4a6e-b2ab-d2f53cd206ca)
+
 
 **Q8 What is the number of views and cart adds for each product category?**
 ````sql
@@ -91,6 +107,9 @@ FROM page_hierarchy P INNER JOIN events E ON P.page_id = E.page_id
 WHERE product_category IS NOT NULL
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/585ce30c-a173-437f-b6bf-6218a7475a7b)
+
 
 **Q9 What are the top 3 products by purchases?**
 ````sql
@@ -104,6 +123,9 @@ GROUP BY 1,2
 order by 3 DESC
 LIMIT 3;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/32776142-4ec8-42c3-a250-f02bf66e0e0c)
+
 
 ### PRODUCT FUNNEL ANALYSIS 
 
@@ -150,6 +172,9 @@ FROM combined
 GROUP BY 1,2;
 ''''
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/dc1d054a-87f5-430b-8a1c-eadae23aec62)
+
+
 ````sql
 # second table
 CREATE TEMPORARY TABLE product_category_info
@@ -157,6 +182,9 @@ SELECT product_category, SUM(views) AS views, SUM(carts) AS carts, SUM(abondoned
 FROM product_info
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/9e42b8dd-7902-4963-9ca0-91aa9e04d444)
+
 
 **Q1 Which product had the most views, cart adds and purchases?**
 ````sql
@@ -200,6 +228,9 @@ FROM
  
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/d2b38a29-d253-4c83-a21d-3162a8d92b44)
+
+
 **Q2 Which product was most likely to be abandoned?**
 ````sql
 -- NEED TO CALCULATE THE LIKELYHOOD probability - abondened/cart_added
@@ -209,6 +240,9 @@ ORDER BY 2 DESC
 limit 1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/d929b8da-bb50-4436-a87b-0b7b58da0212)
+
+
 **Q3 Which product had the highest view to purchase percentage?**
 ````sql
 SELECT product, purchased/views AS view_purchase_perc
@@ -217,17 +251,24 @@ ORDER BY 2 DESC
 limit 1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/41e35a4b-c294-488c-a48d-30c91480018c)
+
+
 **Q4 What is the average conversion rate from view to cart add?**
 ````sql
 SELECT AVG(carts/views) AS views_to_add_conversion
 FROM product_info;
 ````
 
+Output(views_to_add_conversion): 0.5317019
+
 **Q5 What is the average conversion rate from cart add to purchase?**
 ````sql
 SELECT AVG(purchased/carts) AS carts_to_purchased_conversion
 FROM product_info;
 ````
+
+Output(carts_to_purchased_conversion): 0.75927977
 
 ### PART D - CAMPAIGN ANALYSIS 
 
@@ -277,6 +318,9 @@ GROUP BY
   campaign_identifier.campaign_name
   ORDER BY user_id;
   ````
+  
+  ![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/2b34f63f-f6b5-4943-a15d-892564dc2698)
+
   
 ----
 
