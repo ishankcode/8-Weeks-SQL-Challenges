@@ -31,6 +31,7 @@ GROUP BY region_id, node_id
 select sum(C) AS Unique_Nodes
 FROM CTE;
 ````
+Output(Unique_Nodes): 25
 
 **Q2 What is the number of nodes per region?**
 ````sql
@@ -38,6 +39,8 @@ SELECT region_name,COUNT(DISTINCT node_id)
 FROM customer_nodes C INNER JOIN regions R ON C.region_id = R.region_id 
 GROUP BY region_name;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ce340b4e-2c74-43ec-b893-825717e106dd)
+
 
 **Q3 How many customers are allocated to each region?**
 ````sql
@@ -45,6 +48,8 @@ SELECT region_name,COUNT(DISTINCT customer_id)
 FROM customer_nodes C INNER JOIN regions R ON C.region_id = R.region_id 
 GROUP BY region_name;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/e41200f0-6dce-459a-b9f3-a1b5ef472eb2)
+
 
 **#Q4 How many days on average are customers reallocated to a different node?**
 
@@ -61,6 +66,8 @@ SELECT txn_type, SUM(txn_amount) As total_amount, COUNT(*) AS txn_count
 FROM customer_transactions
 GROUP BY 1;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/33b6e0bc-e0dc-4c9d-97c7-ab51d23b7385)
+
 
 **Q2 What is the average total historical deposit counts and amounts for all customers?**
 ````sql
@@ -75,6 +82,9 @@ WITH CTE AS
 SELECT SUM(amounts)/SUM(counts), SUM(counts)/COUNT(*)
 FROM CTE;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/e15459c4-fab9-4e24-9c55-a9d9b7c75e5b)
+
 
 - Should not take averga of average !!!
 - Important concept here to calculate the historical avaerage of count - Firstly i calculate total amounts and total transactions
@@ -99,6 +109,9 @@ WHERE count_dep >1 AND (count_pur >=1 OR count_with >=1)
 GROUP BY 1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ace3f0c0-5a98-47bb-944d-3dbc5ecaa9c1)
+
+
 **Q4 What is the closing balance for each customer at the end of the month?**
 ````sql
 WITH CTE1 AS 
@@ -122,6 +135,11 @@ SELECT C2.customer_id, C2.months, IFNULL(balance,0) AS balance_contribution,
 		SUM(balance) OVER(PARTITION BY customer_id ORDER BY months  ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) As ending_bal
 FROM CTE2 C2 LEFT JOIN CTE1 C1 ON C2.customer_id = C1.customer_id AND C2.months = C1.months;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ffee7e0d-6422-46a2-bb31-26981a996a0d)
+
+Table continued for upto 500 customers.
+
 
 **Q5 Comparing the closing balance of a customer’s first month and the closing balance from their second nth, what percentage of customers: <br />
      -- Have a negative first month balance? <br />
@@ -162,6 +180,8 @@ SELECT ROUND(100*SUM(CASE WHEN months =1 AND ending_bal <0 THEN 1 ELSE 0 END)/CO
        ROUND(100*SUM(CASE WHEN balance_contribution < prev_balance THEN 1 ELSE 0 END)/COUNT(*),2) AS neg_to_pos
 FROM CTE3;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/eb1fdddb-5884-41fd-83f7-f5c4f2a3c32e)
 
 
 ----
