@@ -30,6 +30,9 @@ GROUP BY 1
 ORDER BY 1;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/ff42cdae-975d-42f8-ab05-fc85b9226b69)
+
+
 **Q3 What do you think we should do with these null values in the fresh_segments.interest_metrics**
 -- As there are significant null values that exist, we need to analyze what they might refer to
 
@@ -53,6 +56,9 @@ SELECT *
 FROM CTE, CTE2;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/79609773-8427-4736-92bb-f84acfa21d85)
+
+
 **Q5 Summarise the id values in the fresh_segments.interest_map by its total record count in this table**
 ````sql
 WITH cte_id_records AS (
@@ -69,6 +75,9 @@ FROM cte_id_records
 GROUP BY id
 ORDER BY id;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/67e4d4b5-48e0-4e40-9a01-17661b3ae549)
+
 
 **Q6 What sort of table join should we perform for our analysis and why? Check your logic by checking the rows where interest_id = 21246
 #    in your joined output and include all columns from fresh_segments.interest_metrics and all columns from fresh_segments.interest_map 
@@ -90,6 +99,9 @@ SELECT * FROM cte_join
 WHERE interest_id = 21246;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/4040573b-9210-4a81-aa9c-fd744b93e220)
+
+
 **Q7 Are there any records in your joined table where the month_year value is before the created_at value from the 
    fresh_segments.interest_map table? Do you think these values are valid and why?**
 ````sql
@@ -107,6 +119,8 @@ INNER JOIN fresh_segments.interest_map
 SELECT COUNT(*) FROM cte_join
 WHERE month_year < created_at;
 ````
+
+Output: 188
 
 ### PART B : Interest Analysis
 
@@ -130,6 +144,7 @@ FROM cte_interest_months
 GROUP BY total_months
 ORDER BY total_months DESC;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/8b37fe2d-5bc6-4d5f-b241-25af6c6d3105)
 
 **Q2 Using this same total_months measure - calculate the cumulative percentage of all records starting at 14 months - which
    total_months value passes the 90% cumulative percentage value?**
@@ -155,6 +170,9 @@ FROM cte_cumalative_perc
 WHERE cumalative_perc >=90; 
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/d75e118e-dfbd-4991-b46c-7163f4d086c8)
+
+
 **Q3 If we were to remove all interest_id values which are lower than the total_months value we found in the previous question - how many
    total data points would we be removing?**
 ````sql
@@ -174,6 +192,9 @@ WHERE exists( SELECT interest_id
 			  WHERE COUNT_CTE.interest_id = fresh_segments.interest_metrics.interest_id
 			);
 ````
+
+Output(Rows Removed): 400
+
 
 **Q4 Does this decision make sense to remove these data points from a business perspective? Use an example where there are all 14 months 
    present to a removed interest example for your arguments - think about what it means to have less months present from a segment
@@ -199,6 +220,8 @@ ORDER BY 1;
 -- Slightly confused in what is actua;ly being asked in problem (Another thing maybe being asked is - same query but not including removed_rows
 -- Or asking more detailed answer such as for each month calculating the frquency of each interesr_id
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/38a3bec5-db57-45fa-8a6e-9a15ce7237d2)
 
 
 ### Part C. Segment Analysis 
@@ -242,6 +265,9 @@ SELECT * FROM BOTTOM_composition
 WHERE rnk<=10;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/a7fc1d7a-5890-4c64-8aba-b2ca4cf928ba)
+
+
 **Q2 Which 5 interests had the lowest average ranking value?**
 ````sql
 SELECT IM.interest_name, interest_id, AVG(ranking), COUNT(*)
@@ -251,6 +277,9 @@ ORDER BY 3 ASC
 LIMIT 5;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/5caade68-04f2-412f-a333-67c3a7bea5ee)
+
+
 **Q3 Which 5 interests had the largest standard deviation in their percentile_ranking value?**
 ````sql
 SELECT IM.interest_name, interest_id, STDDEV(percentile_ranking), COUNT(*)
@@ -259,6 +288,9 @@ GROUP BY 1,2
 ORDER BY 3 DESC
 LIMIT 5;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/d70e62e6-fe63-4527-808e-598e3007ad11)
+
 
 **Q4 For the 5 interests found in the previous question - what was minimum and maximum percentile_ranking values for each interest and
    its corresponding year_month value? Can you describe what is happening for these 5 interests?**
@@ -277,6 +309,9 @@ FROM interest_metrics
 WHERE interest_id IN (SELECT interest_id FROM CTE_FILTERED) 
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/8117cfd6-eed3-4650-bc31-07ce56eb7430)
+
 -- FROM tnis we observed that the five customers identified with highest standard deviation in percentile ranking
 -- has a very high range. Thus this can be used to verify our previous results 
 
@@ -309,6 +344,9 @@ FROM CTE
 WHERE rnk<=10;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/5d165182-03bf-447e-a305-b7a0cded9faa)
+
+
 **Q2 For all of these top 10 interests - which interest appears the most often?**
 ````sql
 WITH CTE AS 
@@ -335,6 +373,9 @@ from appearance
 WHERE appearances = (SELECT MAX(appearances) FROM appearance);
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/b3fba180-205c-4dd7-a444-b0b43f66e002)
+
+
 **Q3 What is the average of the average composition for the top 10 interests for each month?**
 ````sql
 WITH CTE AS 
@@ -353,6 +394,9 @@ SELECT month_year, ROUND(AVG(avg_composition),2) AS avg_avg_composition
 FROM CTE_F
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/e56f8d09-149a-4548-81fc-cc2169f71e6f)
+
 
 **Q4 What is the 3 month rolling average of the max average composition value from September 2018 to August 2019 and include the 
    previous top ranking interests in the same output shown below.**
@@ -384,6 +428,9 @@ SELECT month_year, interest_name, index_composition, rolling_avg_3months,
 FROM CTE_F
 WHERE month_year >= "2018-09-01";
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/4d311ae7-3358-41bf-8088-dcb12549d9f6)
+
 
 **Q5 Provide a possible reason why the max average composition might change from month to month? Could it signal something is not 
    quite right with the overall business model for Fresh Segments?**
