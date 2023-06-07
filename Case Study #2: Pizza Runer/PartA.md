@@ -123,5 +123,6 @@ GROUP BY 1
 ORDER BY 1 DESC;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/be896fc3-2b58-4954-b6a0-cc498303214f)
 
 ----
