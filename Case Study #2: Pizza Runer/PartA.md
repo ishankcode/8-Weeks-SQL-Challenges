@@ -89,22 +89,39 @@ WITH CTE AS
 select *
 from CTE;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/478c5325-dfe4-4c45-9555-d20857d118db)
 
 
 
 **Q8 How many pizzas were delivered that had both exclusions and extras? **
 
 ````sql
+SELECT COUNT(*)
+FROM customers_orders C INNER JOIN runner_orders R ON C.order_id = R.order_id
+WHERE (cancellation IS NULL OR cancellation ="NaN" OR cancellation NOT IN ('Restaurant Cancellation', 'Customer Cancellation'))		
+	AND (C.exclusions IS NOT NULL AND C.exclusions != ""  AND C.extras IS NOT NULL AND C.extras != "" AND C.extras != "NaN");
 ````
+Output: 1
+
 
 **Q9 What was the total volume of pizzas ordered for each hour of the day? **
 
 ````sql
+SELECT HOUR(order_time) AS hour_of_datE, COUNT(*) AS pizza_count
+FROM customers_orders
+GROUP BY 1
+ORDER BY 1 ASC;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/41c5b1cf-32f7-41b7-93fb-bad92c7cb0e7)
 
 **Q10 What was the volume of orders for each day of the week? **
 
 ````sql
+SELECT DAYNAME(order_time) , COUNT(*)
+FROM customers_orders
+GROUP BY 1
+ORDER BY 1 DESC;
 ````
+
 
 ----
