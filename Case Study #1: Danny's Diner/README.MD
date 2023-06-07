@@ -20,4 +20,8 @@ FROM sales S INNER JOIN menu M ON S.product_id = M.product_id
 GROUP BY customer_id;
 ````
 
+Output
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/7e349135-8149-4d6c-8d6e-e6f4e118dcc8)
+
+
 
