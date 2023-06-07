@@ -23,6 +23,7 @@ SELECT P.plan_id, plan_name, price, customer_id, start_date
 FROM plans P INNER JOIN subscriptions S ON P.plan_id = S.plan_id
 order by 4;
 ````
+
 ----
 
 ### PartB. Data Analysis Questions
@@ -32,6 +33,8 @@ order by 4;
 SELECT COUNT(DISTINCT customer_id) AS total_customers
 FROM subscriptions;
 ````
+ Output(Total_Customers) = 10000
+
 
 **Q2 What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value?
 
@@ -41,6 +44,9 @@ FROM subscriptions
 WHERE plan_id = 0
 GROUP BY MONTH(start_date);
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/1f550ff3-bfe8-478b-a5bc-003457a50122)
+
+
 **Q3 What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name?**
 ````sql
 SELECT plan_id,
@@ -52,6 +58,8 @@ WHERE year(start_date) > 2020
 GROUP BY 1,2
 ORDER BY 3 ASC ;
 ````
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/92c7e190-d8a2-4351-b53d-e390200cb71b)
+
 
 **Q4 What is the customer count and percentage of customers who have churned rounded to 1 decimal place?**
 ````sql
@@ -59,6 +67,9 @@ SELECT SUM(CASE WHEN P.plan_id = 4 THEN 1 ELSE 0 END) AS count_customers,
 		ROUND(100*SUM(CASE WHEN P.plan_id = 4 THEN 1 ELSE 0 END)/COUNT(DISTINCT customer_id),1) AS perc_customers
 FROM plans P INNER JOIN subscriptions S ON P.plan_id = S.plan_id;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/33e151a2-5b67-4ea7-a189-8bff284b315d)
+
 
 **HQ5 ow many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?**
 ````sql
@@ -78,6 +89,9 @@ SELECT count(customer_id) AS 'churn after trial count', round(100 *count(custome
 FROM churners;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/b5602ec0-6806-4b2a-b63b-d72c3f5d06df)
+
+
 **Q6 What is the number and percentage of customer plans after their initial free trial?**
 ````sql
 WITH ranked_plans AS 
@@ -94,6 +108,9 @@ WHERE plan_rank = 2
 GROUP BY plans.plan_id, plans.plan_name
 ORDER BY plans.plan_id;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/6f62f742-e36a-4baf-bf52-b32c7e404a39)
+
 
 **Q7 What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?**
 ````sql
@@ -113,6 +130,9 @@ GROUP BY 1,2
 ORDER BY plan_id;
 ````
 
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/38b74240-fd86-4b77-a26a-b4a2421169e0)
+
+
 **Q8 How many customers have upgraded to an annual plan in 2020?**
 ````sql
 SELECT COUNT(DISTINCT customer_id)
@@ -121,6 +141,8 @@ WHERE YEAR(start_date)= 2020 AND plan_id = 3;
 ````
 -- here there can be multiple options to this question that plan was upgraded after the customer was started at plan 0 or at plan1
 -- in that case can use row_number() to keep track of customers updates as done previously
+
+Output: 195
 
 **Q9 How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?**
 ````sql
@@ -139,6 +161,7 @@ WITH CTE1 AS
 SELECT ROUND(AVG(DATEDIFF(plan_3_start,customer_start)))
 FROM CTE1 C1 INNER JOIN CTE2 C2 ON C1.customer_id = C2.customer_id;
 ````
+Output : 105
 
 **Q10 Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)**
 ````sql
@@ -179,6 +202,9 @@ SELECT CASE WHEN duration < 30 THEN "0 - 30 Days"
 FROM annual_days
 GROUP BY 1;
 ````
+
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/6c7cf909-cfe4-4689-af2d-705f6ecfec59)
+
 **Q11 How many customers downgraded from a pro monthly to a basic monthly plan in 2020?**
 ````sql
 WITH CTE AS 
@@ -190,7 +216,6 @@ SELECT COUNT(*) AS downgraded_count
 FROM CTE 
 where plan_id = 1 AND prev_plan = 2 AND YEAR(start_date) = 2020;
 ````
-
-#How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+Output: 0
 
 ----
