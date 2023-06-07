@@ -2,29 +2,47 @@
 
 ![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/1d8cb5dd-7def-4458-beb4-363ec2b87249)
 
+[Visit This link for complete Project Explanantion](https://8weeksqlchallenge.com/case-study-3/)
+
+### Problem Statement
+Danny created a new streaming service that only had food related content - something like Netflix but with only cooking shows! Danny finds a few smart friends to launch his new startup Foodie-Fi in 2020 and started selling monthly and annual subscriptions, giving their customers unlimited on-demand access to exclusive food videos from around the world! This case study focuses on using subscription style digital data to answer important business questions.
+
+### Entity Relationship Diagram
+![image](https://github.com/ishankcode/8-Weeks-SQL-Challenges/assets/66678343/4b27d04a-ee0e-4109-bbe6-b665cc89482f)
 
 
 
+----
 
-/* ------------------------------------------------ Customer Journey --------------------------------------------------*/
-#Q1 Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each
-# customer’s onboarding journey.
+### Part A. Customer Journey
+
+**Q1 Based off the 8 sample customers provided in the sample from the subscriptions table, write a brief description about each
+customer’s onboarding journey.**
+````sql
 SELECT P.plan_id, plan_name, price, customer_id, start_date
 FROM plans P INNER JOIN subscriptions S ON P.plan_id = S.plan_id
 order by 4;
+````
+----
 
-/* -----------------------------------------------------Data Analysis Questions--------------------------------------------------*/
-# Q1 How many customers has Foodie-Fi ever had?
+### PartB. Data Analysis Questions
+
+**Q1 How many customers has Foodie-Fi ever had?**
+````sql
 SELECT COUNT(DISTINCT customer_id) AS total_customers
 FROM subscriptions;
+````
 
-#Q2 What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value?
+**Q2 What is the monthly distribution of trial plan start_date values for our dataset - use the start of the month as the group by value?
+
+````sql
 SELECT MIN(start_date), COUNT(DISTINCT customer_id) AS total_customers
 FROM subscriptions
 WHERE plan_id = 0
 GROUP BY MONTH(start_date);
-
-#Q3 What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name?
+````
+**Q3 What plan start_date values occur after the year 2020 for our dataset? Show the breakdown by count of events for each plan_name?**
+````sql
 SELECT plan_id,
        plan_name,
        count(*) AS 'count of events'
@@ -33,13 +51,17 @@ JOIN plans USING (plan_id)
 WHERE year(start_date) > 2020
 GROUP BY 1,2
 ORDER BY 3 ASC ;
+````
 
-#Q4 What is the customer count and percentage of customers who have churned rounded to 1 decimal place?
+**Q4 What is the customer count and percentage of customers who have churned rounded to 1 decimal place?**
+````sql
 SELECT SUM(CASE WHEN P.plan_id = 4 THEN 1 ELSE 0 END) AS count_customers,
 		ROUND(100*SUM(CASE WHEN P.plan_id = 4 THEN 1 ELSE 0 END)/COUNT(DISTINCT customer_id),1) AS perc_customers
 FROM plans P INNER JOIN subscriptions S ON P.plan_id = S.plan_id;
+````
 
-#HQ5 ow many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?
+**HQ5 ow many customers have churned straight after their initial free trial - what percentage is this rounded to the nearest whole number?**
+````sql
 WITH next_plan_cte AS
 (
 	SELECT *, lead(plan_id, 1) over(PARTITION BY customer_id ORDER BY start_date) AS next_plan
@@ -54,8 +76,10 @@ WITH next_plan_cte AS
 SELECT count(customer_id) AS 'churn after trial count', round(100 *count(customer_id)/
 						(SELECT count(DISTINCT customer_id) AS 'distinct customers' FROM subscriptions), 2) AS 'churn percentage'
 FROM churners;
+````
 
-#Q6 What is the number and percentage of customer plans after their initial free trial?
+**Q6 What is the number and percentage of customer plans after their initial free trial?**
+````sql
 WITH ranked_plans AS 
 (
 	SELECT customer_id,plan_id,ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY start_date ASC) AS plan_rank
@@ -69,8 +93,10 @@ INNER JOIN foodie_fi.plans
 WHERE plan_rank = 2
 GROUP BY plans.plan_id, plans.plan_name
 ORDER BY plans.plan_id;
+````
 
-#Q7 What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?
+**Q7 What is the customer count and percentage breakdown of all 5 plan_name values at 2020-12-31?**
+````sql
 -- Basiclly need to identify the customer status based on the current plan
 WITH latest_update AS
 (
@@ -85,15 +111,19 @@ FROM latest_update
 WHERE latest_plan = 1
 GROUP BY 1,2 
 ORDER BY plan_id;
+````
 
-#Q8 How many customers have upgraded to an annual plan in 2020?
+**Q8 How many customers have upgraded to an annual plan in 2020?**
+````sql
 SELECT COUNT(DISTINCT customer_id)
 FROM subscriptions
 WHERE YEAR(start_date)= 2020 AND plan_id = 3;
+````
 -- here there can be multiple options to this question that plan was upgraded after the customer was started at plan 0 or at plan1
 -- in that case can use row_number() to keep track of customers updates as done previously
 
-#Q9 How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?
+**Q9 How many days on average does it take for a customer to an annual plan from the day they join Foodie-Fi?**
+````sql
 WITH CTE1 AS
 ( 
 	SELECT customer_id, MIN(start_date) AS customer_start
@@ -108,9 +138,10 @@ WITH CTE1 AS
 )
 SELECT ROUND(AVG(DATEDIFF(plan_3_start,customer_start)))
 FROM CTE1 C1 INNER JOIN CTE2 C2 ON C1.customer_id = C2.customer_id;
+````
 
-
-#Q10 Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)
+**Q10 Can you further breakdown this average value into 30 day periods (i.e. 0-30 days, 31-60 days etc)**
+````sql
 WITH annual_plan AS (
   SELECT
     customer_id,
@@ -132,7 +163,7 @@ INNER JOIN trial T
   ON A.customer_id = T.customer_id
 )
 SELECT CASE WHEN duration < 30 THEN "0 - 30 Days"
-			WHEN duration BETWEEN 30 AND 60 THEN "30 - 60 Days"
+	    WHEN duration BETWEEN 30 AND 60 THEN "30 - 60 Days"
             WHEN duration BETWEEN 60 AND 90 THEN "60 - 90 Days"
             WHEN duration BETWEEN 90 AND 120 THEN "90 - 120 Days"
             WHEN duration BETWEEN 120 AND 150 THEN "120 - 150 Days"
@@ -147,8 +178,9 @@ SELECT CASE WHEN duration < 30 THEN "0 - 30 Days"
         COUNT(customer_id)
 FROM annual_days
 GROUP BY 1;
-
-#Q11 How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+````
+**Q11 How many customers downgraded from a pro monthly to a basic monthly plan in 2020?**
+````sql
 WITH CTE AS 
 (	
 	SELECT customer_id, plan_id, start_date, LAG(plan_id) OVER(PARTITION BY customer_id ORDER BY start_date) AS prev_plan
@@ -157,6 +189,8 @@ WITH CTE AS
 SELECT COUNT(*) AS downgraded_count
 FROM CTE 
 where plan_id = 1 AND prev_plan = 2 AND YEAR(start_date) = 2020;
-
+````
 
 #How many customers downgraded from a pro monthly to a basic monthly plan in 2020?
+
+----
